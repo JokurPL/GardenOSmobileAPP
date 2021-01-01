@@ -1,0 +1,132 @@
+package com.example.gardenos
+
+import android.app.ProgressDialog
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothSocket
+import android.content.Context
+import android.content.Intent
+import android.os.AsyncTask
+import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.control_activity.*
+import java.io.IOError
+import java.io.IOException
+import java.lang.RuntimeException
+import java.util.*
+
+class ControlActivity: AppCompatActivity() {
+
+    companion object {
+        var mMyUUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+        var mBluetoothSocket: BluetoothSocket? = null
+        lateinit var mProgress: ProgressDialog
+        lateinit var mBluetoothAdapter: BluetoothAdapter
+        var mIsConnected: Boolean = false
+        lateinit var mAddress: String
+        lateinit var mName: String
+
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.control_activity)
+
+        if(intent.hasExtra(MainActivity.extraName)) mName = intent.getStringExtra(MainActivity.extraName).toString()
+        if(intent.hasExtra(MainActivity.extraAddress)) mAddress = intent.getStringExtra(MainActivity.extraAddress).toString()
+
+         deviceNameView.text = mName
+         deviceAddressView.text = mAddress
+
+        ConnectToDevice(this).execute()
+
+        testButton.setOnClickListener {
+            try {
+                sendCommand("a")
+            } catch (e: RuntimeException) {
+                Toast.makeText(this, "Coś poszło nie tak :/", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        dscButton.setOnClickListener {
+            disconnect()
+        }
+
+    }
+
+    private fun sendCommand(input: String) {
+        if (mBluetoothSocket != null) {
+            try {
+                mBluetoothSocket!!.outputStream.write(input.toByteArray())
+            }
+            catch (e: IOError) {
+                Toast.makeText(this, "Coś poszło nie tak :/", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun disconnect() {
+        if (mBluetoothSocket != null) {
+           try {
+               mBluetoothSocket!!.close()
+               mBluetoothSocket = null
+
+               mIsConnected = false
+           } catch (e: IOException) {
+               //Toast.makeText(this, "Coś poszło nie tak", Toast.LENGTH_SHORT).show()
+               e.printStackTrace()
+           }
+        }
+        finish()
+     }
+
+    private class ConnectToDevice(ctx: Context) : AsyncTask<Void, Void, String>() {
+
+        private var connectSuccess: Boolean = true
+        private val context: Context?
+
+        init {
+            this.context = ctx
+        }
+
+        override fun doInBackground(vararg params: Void?): String? {
+            try {
+                if (mBluetoothSocket == null || !mIsConnected) {
+                    mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+                    val device: BluetoothDevice = mBluetoothAdapter.getRemoteDevice(mAddress)
+                    mBluetoothSocket = device.createInsecureRfcommSocketToServiceRecord(mMyUUID)
+                    BluetoothAdapter.getDefaultAdapter().cancelDiscovery()
+
+                    mBluetoothSocket!!.connect()
+                }
+            } catch (e: IOException) {
+                connectSuccess = false
+                e.printStackTrace()
+            }
+            return null
+        }
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+            mProgress = ProgressDialog.show(context, "Łączenie...", "Proszę czekać")
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+
+            if (!connectSuccess) {
+                Log.i("data", "Couldn't connect to device...")
+            } else {
+                mIsConnected = true
+            }
+            mProgress.dismiss()
+        }
+
+    }
+
+}
+

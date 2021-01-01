@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GardenOS</string>
+    <string name="connectToDevice">Połącz się z urządzeniem</string>
+    <string name="settings">Ustawienia</string>
+    <string name="cannotConnectWarning">Nie można połączyć się z urządzeniem</string>
+    <string name="refresh">Odśwież</string>
+</resources>
