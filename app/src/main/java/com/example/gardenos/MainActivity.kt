@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Nie znaleziono sparowanych urządzeń", Toast.LENGTH_SHORT).show()
         }
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, list)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_2, android.R.id.text2,  list)
         select_device_list.adapter = adapter
         select_device_list.onItemClickListener = AdapterView.OnItemClickListener{_, _, position, _ ->
             val device: BluetoothDevice = list[position]

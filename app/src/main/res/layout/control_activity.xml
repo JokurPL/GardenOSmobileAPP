@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/deviceNameView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
@@ -20,25 +20,24 @@
 
     <TextView
         android:id="@+id/deviceAddressView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="20dp"
         android:textSize="14sp"
         app:layout_constraintTop_toBottomOf="@+id/deviceNameView"
-        tools:layout_editor_absoluteX="0dp"
-
-        />
+        app:layout_constraintStart_toStartOf="@id/deviceNameView"
+        tools:layout_editor_absoluteX="0dp" />
 
     <Button
-        android:id="@+id/testButton"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="56dp"
+        android:id="@+id/connectButton"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:text="TEST DIODY"
+        android:text="@string/connectString"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,11 +45,67 @@
 
     <Button
         android:id="@+id/dscButton"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:text="ROZŁĄCZ"
+        android:layout_marginTop="10dp"
+        android:textSize="12sp"
+        android:text="@string/disconnectString"
+        app:layout_constraintStart_toEndOf="@+id/connectButton"
+        app:layout_constraintTop_toBottomOf="@+id/deviceAddressView" />
+
+    <Button
+        android:id="@+id/testButton"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:textSize="12sp"
+        android:text="@string/testString"
+        app:layout_constraintStart_toEndOf="@+id/dscButton"
+        app:layout_constraintTop_toBottomOf="@+id/deviceAddressView" />
+
+    <ImageView
+        android:id="@+id/btConnected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="24dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/deviceNameView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_bluetooth_audio_48" />
+
+    <ImageView
+        android:id="@+id/btNotConnected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toEndOf="@+id/deviceNameView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_bluetooth_disabled_48" />
+
+    <ProgressBar
+        android:id="@+id/connectProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toEndOf="@+id/deviceNameView"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="315dp"
+        android:layout_height="87dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="36dp"
+        android:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/testButton" />
+        app:layout_constraintTop_toBottomOf="@+id/dscButton" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

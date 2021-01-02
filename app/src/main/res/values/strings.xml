@@ -4,4 +4,7 @@
     <string name="settings">Ustawienia</string>
     <string name="cannotConnectWarning">Nie można połączyć się z urządzeniem</string>
     <string name="refresh">Odśwież</string>
+    <string name="disconnectString">ROZŁĄCZ</string>
+    <string name="testString">test</string>
+    <string name="connectString">POŁĄCZ</string>
 </resources>

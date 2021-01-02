@@ -4,16 +4,25 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
+import android.view.VerifiedInputEvent
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.control_activity.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Dispatchers.IO
 import java.io.IOError
 import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.*
 
 
-class ControlActivity: AppCompatActivity() {
+class ControlActivity : AppCompatActivity() {
 
     companion object {
         var mMyUUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
@@ -26,11 +35,14 @@ class ControlActivity: AppCompatActivity() {
         lateinit var mBluetoothAdapter: BluetoothAdapter
         lateinit var mAddress: String
         lateinit var mName: String
+        lateinit var job: Job
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.control_activity)
+
+        connectProgressBar.visibility = View.INVISIBLE
 
         mName = intent.getStringExtra(MainActivity.extraName).toString()
         mAddress = intent.getStringExtra(MainActivity.extraAddress).toString()
@@ -41,7 +53,14 @@ class ControlActivity: AppCompatActivity() {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         mBluetoothDevice = mBluetoothAdapter.getRemoteDevice(mAddress)
 
-        connect()
+        connectButton.setOnClickListener {
+            if (!mIsConnected) {
+                CoroutineScope(IO).launch {
+                    connect()
+                }
+            }
+
+        }
 
         dscButton.setOnClickListener {
             disconnect()
@@ -49,16 +68,18 @@ class ControlActivity: AppCompatActivity() {
 
         testButton.setOnClickListener {
             send("a")
+            send("test")
         }
+
     }
+
 
     private fun send(input: String) {
         if (mIsConnected) {
             if (mBluetoothSocket != null) {
                 try {
                     mBluetoothSocket!!.outputStream.write(input.toByteArray())
-                }
-                catch (e: IOError) {
+                } catch (e: IOError) {
                     Toast.makeText(this, "Test nie powiódł się", Toast.LENGTH_SHORT).show()
                     e.printStackTrace()
                 }
@@ -66,17 +87,42 @@ class ControlActivity: AppCompatActivity() {
         }
     }
 
-    private fun connect() {
-        try {
-            mBluetoothSocket = mBluetoothDevice.createInsecureRfcommSocketToServiceRecord(mMyUUID)
-            BluetoothAdapter.getDefaultAdapter().cancelDiscovery()
-
-            mBluetoothSocket?.connect()
-            Toast.makeText(applicationContext, "Urządzenie zostało połączone", Toast.LENGTH_SHORT).show()
-            mIsConnected = true
-        } catch (e: IOException) {
-            Toast.makeText(applicationContext, "Połączenie nie udało się", Toast.LENGTH_SHORT).show()
-            Log.i("IOE", e.toString())
+    private suspend fun connect() {
+        val con = CoroutineScope(IO).async {
+            try {
+                mBluetoothSocket = mBluetoothDevice.createInsecureRfcommSocketToServiceRecord(mMyUUID)
+                BluetoothAdapter.getDefaultAdapter().cancelDiscovery()
+                mBluetoothSocket?.connect()
+                mIsConnected = true
+                return@async true
+            } catch (e: IOException) {
+                Log.e("IOE", e.toString())
+                //this.cancel()
+                return@async false
+            }
+        }
+        if (con.isActive) {
+            runOnUiThread(java.lang.Runnable {
+                btConnected.visibility = View.INVISIBLE
+                btNotConnected.visibility = View.INVISIBLE
+                connectProgressBar.visibility = View.VISIBLE
+            })
+        }
+        if (con.await()) {
+            runOnUiThread(java.lang.Runnable {
+                connectProgressBar.visibility = View.INVISIBLE
+                btConnected.visibility = View.VISIBLE
+                btNotConnected.visibility = View.INVISIBLE
+                Toast.makeText(applicationContext, "Połączono z urządzeniem", Toast.LENGTH_SHORT).show()
+            })
+        }
+        else {
+            runOnUiThread(java.lang.Runnable {
+                btConnected.visibility = View.INVISIBLE
+                btNotConnected.visibility = View.VISIBLE
+                connectProgressBar.visibility = View.INVISIBLE
+                Toast.makeText(applicationContext, "Niepołączono z urządzeniem", Toast.LENGTH_SHORT).show()
+            })
         }
     }
 
@@ -89,11 +135,17 @@ class ControlActivity: AppCompatActivity() {
             } catch (e: IOException) {
                 Toast.makeText(this, "Coś poszło nie tak", Toast.LENGTH_SHORT).show()
                 e.printStackTrace()
+            } finally {
+                Toast.makeText(
+                    applicationContext,
+                    "Rozłączono z urządzeniem",
+                    Toast.LENGTH_SHORT
+                ).show()
+                btConnected.visibility = View.INVISIBLE
+                btNotConnected.visibility = View.VISIBLE
+                connectProgressBar.visibility = View.INVISIBLE
             }
         }
-        finish()
-        Toast.makeText(applicationContext, "Urządzenie zostało rozłączone", Toast.LENGTH_SHORT).show()
     }
-
 }
 
