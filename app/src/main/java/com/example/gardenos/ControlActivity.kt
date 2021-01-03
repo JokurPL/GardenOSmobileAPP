@@ -67,15 +67,21 @@ class ControlActivity : AppCompatActivity() {
         testButton.setOnClickListener {
             send("a")
             //send("test")
-            CoroutineScope(IO).launch {
-                readData()
-            }
         }
 
         dscButton.setOnClickListener {
             disconnect()
         }
+    }
 
+    override fun onPause() {
+        super.onPause()
+        disconnect()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disconnect()
     }
 
     private suspend fun readData() {
@@ -137,6 +143,9 @@ class ControlActivity : AppCompatActivity() {
                 if(mBluetoothSocket!!.isConnected) {
                     mIsConnected = true
                     mmInStream = mBluetoothSocket!!.inputStream
+                }
+                CoroutineScope(IO).launch {
+                    readData()
                 }
                 connectProgressBar.visibility = View.INVISIBLE
                 btConnected.visibility = View.VISIBLE
