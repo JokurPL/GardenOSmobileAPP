@@ -1,5 +1,6 @@
 package com.example.gardenos
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -8,10 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Debug
 import android.util.Log
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         val extraName: String = "Device_name"
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,15 +40,26 @@ class MainActivity : AppCompatActivity() {
             val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivity(enableBluetoothIntent)
         }
+        else {
+            pairedDeviceList()
+        }
 
-        select_device_refresh.setOnClickListener { pairedDeviceList() }
+        swiperefresh.setColorSchemeColors(R.color.purple_200)
 
+        swiperefresh.setOnRefreshListener {
+            if (!mBluetoothAdapter!!.isEnabled) {
+                val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                startActivity(enableBluetoothIntent)
+            }
+            pairedDeviceList()
+        }
     }
 
-    private fun pairedDeviceList() {
-        mPairedDevices = mBluetoothAdapter!!.bondedDevices
-        val list: ArrayList<BluetoothDevice> = ArrayList()
 
+    private fun pairedDeviceList() {
+        val list = mutableListOf<BluetoothDevice>()
+
+        mPairedDevices = mBluetoothAdapter!!.bondedDevices
         if (mPairedDevices.isNotEmpty()) {
 
             for (device: BluetoothDevice in mPairedDevices) {
@@ -59,7 +70,8 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Nie znaleziono sparowanych urządzeń", Toast.LENGTH_SHORT).show()
         }
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_2, android.R.id.text2,  list)
+        val adapter = DeviceAdapter(this, android.R.layout.simple_list_item_2,  list)
+
         select_device_list.adapter = adapter
         select_device_list.onItemClickListener = AdapterView.OnItemClickListener{_, _, position, _ ->
             val device: BluetoothDevice = list[position]
@@ -72,7 +84,7 @@ class MainActivity : AppCompatActivity() {
 
             startActivity(intent)
         }
-
+        swiperefresh.isRefreshing = false
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -1,7 +1,27 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/Row"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:textSize="15sp" >
-</TextView>
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
+    <TextView
+        android:id="@+id/deviceNameView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+
+        android:text="Header"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/deviceAddressView"
+        android:padding="10dp"
+        android:text="sadaasdasd"
+        android:textAppearance="?android:attr/textAppearanceListItem"
+        />
+
+
+</LinearLayout>

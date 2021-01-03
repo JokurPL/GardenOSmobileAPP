@@ -35,8 +35,7 @@ class ControlActivity : AppCompatActivity() {
         lateinit var mBluetoothAdapter: BluetoothAdapter
         lateinit var mAddress: String
         lateinit var mName: String
-        lateinit var job: Job
-    }
+       }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +92,6 @@ class ControlActivity : AppCompatActivity() {
                 mBluetoothSocket = mBluetoothDevice.createInsecureRfcommSocketToServiceRecord(mMyUUID)
                 BluetoothAdapter.getDefaultAdapter().cancelDiscovery()
                 mBluetoothSocket?.connect()
-                mIsConnected = true
                 return@async true
             } catch (e: IOException) {
                 Log.e("IOE", e.toString())
@@ -110,6 +108,9 @@ class ControlActivity : AppCompatActivity() {
         }
         if (con.await()) {
             runOnUiThread(java.lang.Runnable {
+                if(mBluetoothSocket!!.isConnected) {
+                    mIsConnected = true
+                }
                 connectProgressBar.visibility = View.INVISIBLE
                 btConnected.visibility = View.VISIBLE
                 btNotConnected.visibility = View.INVISIBLE
@@ -118,6 +119,7 @@ class ControlActivity : AppCompatActivity() {
         }
         else {
             runOnUiThread(java.lang.Runnable {
+                mIsConnected = false
                 btConnected.visibility = View.INVISIBLE
                 btNotConnected.visibility = View.VISIBLE
                 connectProgressBar.visibility = View.INVISIBLE
@@ -141,6 +143,7 @@ class ControlActivity : AppCompatActivity() {
                     "Rozłączono z urządzeniem",
                     Toast.LENGTH_SHORT
                 ).show()
+                mIsConnected = false
                 btConnected.visibility = View.INVISIBLE
                 btNotConnected.visibility = View.VISIBLE
                 connectProgressBar.visibility = View.INVISIBLE
