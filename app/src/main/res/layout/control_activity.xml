@@ -98,12 +98,11 @@
         />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/outputText"
         android:layout_width="315dp"
-        android:layout_height="87dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="36dp"
-        android:text="TextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dscButton" />
 
