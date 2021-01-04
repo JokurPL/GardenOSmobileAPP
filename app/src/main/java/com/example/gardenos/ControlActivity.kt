@@ -7,6 +7,7 @@ import android.os.*
 import android.util.Log
 import android.util.Log.d
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
@@ -19,8 +20,11 @@ import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import java.io.*
 import java.lang.NullPointerException
+import java.lang.reflect.Field
+import java.net.IDN
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.random.Random
 
@@ -65,7 +69,7 @@ class ControlActivity : AppCompatActivity() {
         }
 
         testButton.setOnClickListener {
-            send("a")
+            send("popoga")
             //send("test")
         }
 
@@ -93,9 +97,36 @@ class ControlActivity : AppCompatActivity() {
                 while (mIsConnected) run {
                     try {
                         numBytes = mmInStream.read(mmBuffer)
-                        runOnUiThread(java.lang.Runnable {
-                            outputText.append(mmBuffer.decodeToString(endIndex = numBytes))
-                        })
+                        var receivedData: String = mmBuffer.decodeToString(endIndex = numBytes)
+                        if (receivedData[0].toString() == "A") {
+
+                            val sensorID = receivedData.slice(0..2)
+                            val sensorValue = receivedData.slice(4 until receivedData.length)
+
+                            Log.i("SENSOR", "Data from $sensorID VALUE: $sensorValue")
+
+                            receivedData = sensorValue
+
+                            runOnUiThread(java.lang.Runnable {
+                                //outputText.append(receivedData)
+                                //outputText.text = receivedData
+                                if (sensorID == "A01") {
+                                    outputTextSensorA01.text = sensorValue
+                                } else if (sensorID == "A02") {
+                                    outputTextSensorA02.text = sensorValue
+                                } else if (sensorID == "A03") {
+                                    outputTextSensorA03.text = sensorValue
+                                } else if (sensorID == "A04") {
+                                    outputTextSensorA04.text = sensorValue
+                                }
+
+                            })
+                        }
+                        else if (receivedData[0].toString() == "T"){
+                            runOnUiThread(java.lang.Runnable {
+                                dataText.text = receivedData.slice(1 until receivedData.length)
+                            })
+                        }
                     } catch (e: IOException) {
                         Log.e("IOE", e.toString())
                         this.cancel()
@@ -144,13 +175,21 @@ class ControlActivity : AppCompatActivity() {
                     mIsConnected = true
                     mmInStream = mBluetoothSocket!!.inputStream
                 }
-                CoroutineScope(IO).launch {
-                    readData()
-                }
+                val date = Date()
+                val formatter = SimpleDateFormat("s,m,H,F,d,M,YY")
+                val answer: String = formatter.format(date)
+                val toSend = "RTC,${answer}"
+                Log.i("DATE", toSend)
+                send(toSend)
+
                 connectProgressBar.visibility = View.INVISIBLE
                 btConnected.visibility = View.VISIBLE
                 btNotConnected.visibility = View.INVISIBLE
                 Toast.makeText(applicationContext, "Połączono z urządzeniem", Toast.LENGTH_SHORT).show()
+
+                CoroutineScope(IO).launch {
+                    readData()
+                }
             })
         }
         else {
