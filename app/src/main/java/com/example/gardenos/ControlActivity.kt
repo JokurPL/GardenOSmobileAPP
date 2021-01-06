@@ -3,30 +3,19 @@ package com.example.gardenos
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
+import android.content.Intent
 import android.os.*
 import android.util.Log
-import android.util.Log.d
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.HandlerCompat
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.android.synthetic.main.control_activity.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import java.io.*
-import java.lang.NullPointerException
-import java.lang.reflect.Field
-import java.net.IDN
-import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.random.Random
 
 
 class ControlActivity : AppCompatActivity() {
@@ -69,23 +58,43 @@ class ControlActivity : AppCompatActivity() {
         }
 
         testButton.setOnClickListener {
-            send("popoga")
-            //send("test")
+            //send("p")
+            if (mIsConnected) {
+                val intent = Intent(applicationContext, Settings::class.java)
+                startActivityForResult(intent, 1)
+            }
         }
 
         dscButton.setOnClickListener {
-            disconnect()
+            if(mIsConnected) {
+                disconnect()
+            }
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        disconnect()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                val date = data!!.getStringExtra("date")
+                dateText.text = date
+                send(date!!)
+            }
+        }
+
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        disconnect()
+    private suspend fun checkConnection() {
+        if (mIsConnected) {
+            coroutineScope {
+                while (mIsConnected) run {
+                    if (!mBluetoothAdapter.isEnabled && !mBluetoothSocket!!.isConnected) {
+                        connect()
+                    }
+                }
+            }
+        }
     }
 
     private suspend fun readData() {
@@ -94,7 +103,7 @@ class ControlActivity : AppCompatActivity() {
         if (mIsConnected) {
             coroutineScope {
                 var numBytes: Int
-                while (mIsConnected) run {
+                while (mIsConnected && mBluetoothAdapter.isEnabled) run {
                     try {
                         numBytes = mmInStream.read(mmBuffer)
                         var receivedData: String = mmBuffer.decodeToString(endIndex = numBytes)
@@ -124,7 +133,7 @@ class ControlActivity : AppCompatActivity() {
                         }
                         else if (receivedData[0].toString() == "T"){
                             runOnUiThread(java.lang.Runnable {
-                                dataText.text = receivedData.slice(1 until receivedData.length)
+                                dateText.text = receivedData.slice(1 until receivedData.length)
                             })
                         }
                     } catch (e: IOException) {
@@ -159,6 +168,7 @@ class ControlActivity : AppCompatActivity() {
             } catch (e: IOException) {
                 Log.e("IOE", e.toString())
                 //this.cancel()
+                mIsConnected = false
                 return@async false
             }
         }
@@ -190,6 +200,11 @@ class ControlActivity : AppCompatActivity() {
                 CoroutineScope(IO).launch {
                     readData()
                 }
+
+                CoroutineScope(Default).launch {
+                    checkConnection()
+                }
+
             })
         }
         else {
@@ -224,6 +239,5 @@ class ControlActivity : AppCompatActivity() {
             }
         }
     }
-
 }
 

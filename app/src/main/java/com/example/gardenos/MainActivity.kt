@@ -57,6 +57,17 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (!mBluetoothAdapter!!.isEnabled) {
+            val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivity(enableBluetoothIntent)
+        }
+        else {
+            pairedDeviceList()
+        }
+    }
 
     private fun pairedDeviceList() {
         val list = mutableListOf<BluetoothDevice>()
