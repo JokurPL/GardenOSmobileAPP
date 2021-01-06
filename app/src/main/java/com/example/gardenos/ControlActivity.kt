@@ -77,9 +77,17 @@ class ControlActivity : AppCompatActivity() {
 
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                val date = data!!.getStringExtra("date")
-                dateText.text = date
-                send(date!!)
+                val dateStart = data!!.getStringExtra(Settings.dateStart)
+                val dateStop = data.getStringExtra(Settings.dateStop)
+                Log.i("dateStop", dateStop.toString())
+                val job = CoroutineScope(IO).launch {
+                    delay(2000)
+                    send(dateStart.toString())
+                }
+                send(dateStop.toString())
+                runBlocking {
+                    job.join()
+                }
             }
         }
 

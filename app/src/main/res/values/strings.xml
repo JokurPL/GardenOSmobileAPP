@@ -7,4 +7,9 @@
     <string name="disconnectString">ROZŁĄCZ</string>
     <string name="testString">test</string>
     <string name="connectString">POŁĄCZ</string>
+    <string name="dateStartIrrigationText">Wybierz date rozpoczęcia podlewania</string>
+    <string name="timeStartIrrigationText">Wybierz czas rozpoczęcia podlewania</string>
+    <string name="stopDateIrrigationText">Wybierz date zakończenia podlewania</string>
+    <string name="stopTimeIrrigationText">Wybierz czas zakończenia podlewania</string>
+    <string name="setIrrigationText">Zaplanuj podlewanie</string>
 </resources>

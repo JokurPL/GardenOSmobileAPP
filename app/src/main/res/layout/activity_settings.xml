@@ -20,7 +20,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Wybierz date podlewania"
+                android:text="@string/dateStartIrrigationText"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="normal|bold"
@@ -37,7 +37,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Wybierz czas rozpoczęcia podlewania"
+                android:text="@string/timeStartIrrigationText"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="normal|bold"
@@ -46,18 +46,33 @@
 
             <TimePicker
                 android:id="@+id/startIrrigationPicker"
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:timePickerMode="spinner"
                 android:layout_gravity="center_horizontal"
-
                 />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Wybierz czas zakończenia podlewania"
+                android:text="@string/stopDateIrrigationText"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="normal|bold"
+                android:padding="10dp"
+                />
+
+            <DatePicker
+                android:id="@+id/stopIrrigationDatePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/stopTimeIrrigationText"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="normal|bold"
@@ -65,7 +80,7 @@
                 />
 
             <TimePicker
-                android:id="@+id/finishIrrigationPicker"
+                android:id="@+id/stopIrrigationPicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:timePickerMode="spinner"
@@ -79,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:layout_margin="10dp"
-                android:text="ustaw"
+                android:text="@string/setIrrigationText"
                 android:textSize="20sp"
                 />
 
