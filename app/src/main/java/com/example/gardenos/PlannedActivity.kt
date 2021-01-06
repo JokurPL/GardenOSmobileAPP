@@ -1,22 +1,11 @@
 package com.example.gardenos
 
 import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import android.view.textservice.TextInfo
-import android.widget.TextView
-import androidx.core.widget.addTextChangedListener
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_settings.*
-import java.text.SimpleDateFormat
-import java.time.DayOfWeek
-import java.util.*
+import kotlinx.android.synthetic.main.planned_activity.*
 
-class Settings : AppCompatActivity() {
+class PlannedActivity : AppCompatActivity() {
 
     companion object {
         val dateStart: String = "date_start_irrigation"
@@ -25,7 +14,10 @@ class Settings : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        setContentView(R.layout.planned_activity)
+
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.subtitle = "Planowane podlewanie"
 
         startIrrigationPicker.setIs24HourView(true);
         stopIrrigationPicker.setIs24HourView(true);
@@ -55,6 +47,10 @@ class Settings : AppCompatActivity() {
             setResult(RESULT_OK, intent)
             finish()
         }
+    }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }

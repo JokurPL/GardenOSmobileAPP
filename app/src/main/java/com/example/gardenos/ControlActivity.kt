@@ -6,6 +6,9 @@ import android.bluetooth.BluetoothSocket
 import android.content.Intent
 import android.os.*
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -34,9 +37,40 @@ class ControlActivity : AppCompatActivity() {
         lateinit var mmInStream: InputStream
        }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.settingsMenuItem -> {
+                if (mIsConnected) {
+                    val intent = Intent(applicationContext, SettingsActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(applicationContext, "Nie jesteś połączony z urządzeniem", Toast.LENGTH_SHORT).show()
+                }
+                true
+            }
+            R.id.plannedIrrigationMenuItem -> {
+                if (mIsConnected) {
+                    val intent = Intent(applicationContext, PlannedActivity::class.java)
+                    startActivityForResult(intent, 1)
+                } else {
+                    Toast.makeText(applicationContext, "Nie jesteś połączony z urządzeniem", Toast.LENGTH_SHORT).show()
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.control_activity)
+
         connectProgressBar.visibility = View.INVISIBLE
 
         mName = intent.getStringExtra(MainActivity.extraName).toString()
@@ -59,10 +93,6 @@ class ControlActivity : AppCompatActivity() {
 
         testButton.setOnClickListener {
             //send("p")
-            if (mIsConnected) {
-                val intent = Intent(applicationContext, Settings::class.java)
-                startActivityForResult(intent, 1)
-            }
         }
 
         dscButton.setOnClickListener {
@@ -77,8 +107,8 @@ class ControlActivity : AppCompatActivity() {
 
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                val dateStart = data!!.getStringExtra(Settings.dateStart)
-                val dateStop = data.getStringExtra(Settings.dateStop)
+                val dateStart = data!!.getStringExtra(PlannedActivity.dateStart)
+                val dateStop = data.getStringExtra(PlannedActivity.dateStop)
                 Log.i("dateStop", dateStop.toString())
                 val job = CoroutineScope(IO).launch {
                     delay(2000)
