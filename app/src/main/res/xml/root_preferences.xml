@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Ogólne">
+
+        <ListPreference
+            android:id="@+id/moistureSensorsAmount"
+            app:entries="@array/sensors_amount_entries"
+            app:entryValues="@array/sensors_amount_values"
+            app:key="sensorsAmount"
+            app:title="@string/sensors_amount_title"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat
+            android:id="@+id/automaticIrrigationSwitch"
+            app:key="automaticIrrigationSwitch"
+            app:summary="Podlewa uwzgledniając uśrednione pomiary z czujników"
+            app:title="Automatyczne podlewanie" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

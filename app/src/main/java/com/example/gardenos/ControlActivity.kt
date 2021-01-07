@@ -12,6 +12,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.control_activity.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Default
@@ -48,7 +49,7 @@ class ControlActivity : AppCompatActivity() {
             R.id.settingsMenuItem -> {
                 if (mIsConnected) {
                     val intent = Intent(applicationContext, SettingsActivity::class.java)
-                    startActivity(intent)
+                    startActivityForResult(intent, 2)
                 } else {
                     Toast.makeText(applicationContext, "Nie jesteś połączony z urządzeniem", Toast.LENGTH_SHORT).show()
                 }
@@ -92,7 +93,7 @@ class ControlActivity : AppCompatActivity() {
         }
 
         testButton.setOnClickListener {
-            //send("p")
+            send("p")
         }
 
         dscButton.setOnClickListener {
@@ -107,17 +108,31 @@ class ControlActivity : AppCompatActivity() {
 
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                val dateStart = data!!.getStringExtra(PlannedActivity.dateStart)
-                val dateStop = data.getStringExtra(PlannedActivity.dateStop)
-                Log.i("dateStop", dateStop.toString())
-                val job = CoroutineScope(IO).launch {
-                    delay(2000)
-                    send(dateStart.toString())
+                if (mIsConnected && mBluetoothSocket!!.isConnected) {
+                    val dateStart = data!!.getStringExtra(PlannedActivity.dateStart)
+                    val dateStop = data.getStringExtra(PlannedActivity.dateStop)
+                    Log.i("dateStop", dateStop.toString())
+                    val job = CoroutineScope(IO).launch {
+                        delay(2000)
+                        send(dateStart.toString())
+                    }
+                    send(dateStop.toString())
+                    runBlocking {
+                        job.join()
+                    }
+                    Toast.makeText(this, "Podlewanie zostało zapisane", Toast.LENGTH_SHORT).show()
                 }
-                send(dateStop.toString())
-                runBlocking {
-                    job.join()
-                }
+            }
+        } else if (requestCode == 2) {
+            if (mIsConnected && mBluetoothSocket!!.isConnected) {
+                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+                val sensorsAmount = sharedPreferences.getString("sensorsAmount", "1")!!.toInt()
+                val automaticIrrigation = if (sharedPreferences.getBoolean("automaticIrrigationSwitch", true)) 1 else 0
+
+                Log.i("PREF", "Czujniki ${sensorsAmount} auto: ${automaticIrrigation}")
+                Toast.makeText(this, "Ustawienia zostały zapisane", Toast.LENGTH_SHORT).show()
+                send("SET,${sensorsAmount},${automaticIrrigation}")
             }
         }
 
