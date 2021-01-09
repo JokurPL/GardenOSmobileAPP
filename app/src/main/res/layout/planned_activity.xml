@@ -85,7 +85,6 @@
                 android:layout_height="wrap_content"
                 android:timePickerMode="spinner"
                 android:layout_gravity="center_horizontal"
-
                 />
 
             <Button

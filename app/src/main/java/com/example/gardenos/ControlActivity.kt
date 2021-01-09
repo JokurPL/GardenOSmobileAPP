@@ -64,6 +64,15 @@ class ControlActivity : AppCompatActivity() {
                 }
                 true
             }
+            R.id.cyclicIrrigationMenuItem -> {
+                if (mIsConnected) {
+                    val intent = Intent(applicationContext, CyclicActivity::class.java)
+                    startActivityForResult(intent, 1)
+                } else {
+                    Toast.makeText(applicationContext, "Nie jesteś połączony z urządzeniem", Toast.LENGTH_SHORT).show()
+                }
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -71,6 +80,8 @@ class ControlActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.control_activity)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         connectProgressBar.visibility = View.INVISIBLE
 
@@ -239,7 +250,7 @@ class ControlActivity : AppCompatActivity() {
                     mmInStream = mBluetoothSocket!!.inputStream
                 }
                 val date = Date()
-                val formatter = SimpleDateFormat("s,m,H,F,d,M,YY")
+                val formatter = SimpleDateFormat("s,m,H,u,d,M,YY")
                 val answer: String = formatter.format(date)
                 val toSend = "RTC,${answer}"
                 Log.i("DATE", toSend)
@@ -291,6 +302,11 @@ class ControlActivity : AppCompatActivity() {
                 connectProgressBar.visibility = View.INVISIBLE
             }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }
 

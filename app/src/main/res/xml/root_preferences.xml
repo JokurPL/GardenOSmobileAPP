@@ -9,7 +9,7 @@
             app:entryValues="@array/sensors_amount_values"
             app:key="sensorsAmount"
             app:title="@string/sensors_amount_title"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true" /> 
         <SwitchPreferenceCompat
             android:id="@+id/automaticIrrigationSwitch"
             app:key="automaticIrrigationSwitch"

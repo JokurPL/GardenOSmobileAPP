@@ -25,4 +25,25 @@
         <item>9</item>
         <item>10</item>
     </string-array>
+
+    <string-array name="day_of_week_cyclic_irrigation">
+        <item>Poniedziałek</item>
+        <item>Wtorek</item>
+        <item>Środa</item>
+        <item>Czwartek</item>
+        <item>Piątek</item>
+        <item>Sobota</item>
+        <item>Niedziela</item>
+    </string-array>
+
+    <string-array name="day_amount_cyclic_irrigation">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+
 </resources>

@@ -3,5 +3,6 @@
 
         <item android:id="@+id/settingsMenuItem" android:title="@string/settingsText"/>
         <item android:id="@+id/plannedIrrigationMenuItem" android:title="@string/plannedIrrigationText" />
+        <item android:id="@+id/cyclicIrrigationMenuItem" android:title="@string/cyclicTextMenu" />
 
 </menu>
