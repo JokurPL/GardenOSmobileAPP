@@ -21,31 +21,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="20dp"
-                android:text="Okreś ilośc dni"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray"/>
-
-            <Spinner
-                android:id="@+id/dayAmountCyclicIrrigation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/day_amount_cyclic_irrigation"
-                android:padding="10dp"
-                android:layout_margin="10dp"
-                android:spinnerMode="dropdown" />
-
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="20dp"
                 android:text="@string/cyclicDayHeaderText"
                 android:textAlignment="center"
                 android:textColor="@color/black"
@@ -56,81 +31,47 @@
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"/>
 
-            <Spinner
-                android:id="@+id/dayOfWeekCyclicIrrigation1"
+            <CheckBox
+                android:id="@+id/mondayCyclic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/day_of_week_cyclic_irrigation"
-                android:padding="10dp"
-                android:layout_margin="10dp"
-                android:spinnerMode="dropdown" />
+                android:text="Poniedziałek" />
 
-            <Spinner
-                android:id="@+id/dayOfWeekCyclicIrrigation2"
+            <CheckBox
+                android:id="@+id/tuesdeyCyclic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/day_of_week_cyclic_irrigation"
-                android:padding="10dp"
-                android:layout_margin="10dp"
-                android:spinnerMode="dropdown"
-                android:visibility="gone"
-                />
+                android:text="Wtorek" />
 
-            <Spinner
-                android:id="@+id/dayOfWeekCyclicIrrigation3"
+            <CheckBox
+                android:id="@+id/wednesdeyCyclic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/day_of_week_cyclic_irrigation"
-                android:padding="10dp"
-                android:layout_margin="10dp"
-                android:spinnerMode="dropdown"
-                android:visibility="gone"
-                />
+                android:text="Środa" />
 
-            <Spinner
-                android:id="@+id/dayOfWeekCyclicIrrigation4"
+            <CheckBox
+                android:id="@+id/thursdayCyclic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/day_of_week_cyclic_irrigation"
-                android:padding="10dp"
-                android:layout_margin="10dp"
-                android:spinnerMode="dropdown"
-                android:visibility="gone"
-                />
+                android:text="Czwartek" />
 
-            <Spinner
-                android:id="@+id/dayOfWeekCyclicIrrigation5"
+            <CheckBox
+                android:id="@+id/fridayCyclic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/day_of_week_cyclic_irrigation"
-                android:padding="10dp"
-                android:layout_margin="10dp"
-                android:spinnerMode="dropdown"
-                android:visibility="gone"
-                />
+                android:text="Piątek" />
 
-            <Spinner
-                android:id="@+id/dayOfWeekCyclicIrrigation6"
+            <CheckBox
+                android:id="@+id/saturdayCyclic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/day_of_week_cyclic_irrigation"
-                android:padding="10dp"
-                android:layout_margin="10dp"
-                android:spinnerMode="dropdown"
-                android:visibility="gone"
-                />
+                android:text="Sobota" />
 
-            <Spinner
-                android:id="@+id/dayOfWeekCyclicIrrigation7"
+            <CheckBox
+                android:id="@+id/sundayCyclic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/day_of_week_cyclic_irrigation"
-                android:padding="10dp"
-                android:layout_margin="10dp"
-                android:spinnerMode="dropdown"
-                android:visibility="gone"
-                />
-
+                android:text="Niedziela" />
 
 
             <TextView
@@ -150,7 +91,7 @@
                 android:background="@android:color/darker_gray"/>
 
             <TimePicker
-                android:id="@+id/startIrrigationPicker"
+                android:id="@+id/startCyclicIrrigationPicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -171,7 +112,7 @@
                 android:background="@android:color/darker_gray"/>
 
             <TimePicker
-                android:id="@+id/stopIrrigationPicker"
+                android:id="@+id/stopCyclicIrrigationPicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

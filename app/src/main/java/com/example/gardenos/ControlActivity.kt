@@ -46,15 +46,6 @@ class ControlActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.settingsMenuItem -> {
-                if (mIsConnected) {
-                    val intent = Intent(applicationContext, SettingsActivity::class.java)
-                    startActivityForResult(intent, 2)
-                } else {
-                    Toast.makeText(applicationContext, "Nie jesteś połączony z urządzeniem", Toast.LENGTH_SHORT).show()
-                }
-                true
-            }
             R.id.plannedIrrigationMenuItem -> {
                 if (mIsConnected) {
                     val intent = Intent(applicationContext, PlannedActivity::class.java)
@@ -64,10 +55,21 @@ class ControlActivity : AppCompatActivity() {
                 }
                 true
             }
+
+            R.id.settingsMenuItem -> {
+                if (mIsConnected) {
+                    val intent = Intent(applicationContext, SettingsActivity::class.java)
+                    startActivityForResult(intent, 2)
+                } else {
+                    Toast.makeText(applicationContext, "Nie jesteś połączony z urządzeniem", Toast.LENGTH_SHORT).show()
+                }
+                true
+            }
+
             R.id.cyclicIrrigationMenuItem -> {
                 if (mIsConnected) {
                     val intent = Intent(applicationContext, CyclicActivity::class.java)
-                    startActivityForResult(intent, 1)
+                    startActivityForResult(intent, 3)
                 } else {
                     Toast.makeText(applicationContext, "Nie jesteś połączony z urządzeniem", Toast.LENGTH_SHORT).show()
                 }
@@ -120,18 +122,9 @@ class ControlActivity : AppCompatActivity() {
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 if (mIsConnected && mBluetoothSocket!!.isConnected) {
-                    val dateStart = data!!.getStringExtra(PlannedActivity.dateStart)
-                    val dateStop = data.getStringExtra(PlannedActivity.dateStop)
-                    Log.i("dateStop", dateStop.toString())
-                    val job = CoroutineScope(IO).launch {
-                        delay(2000)
-                        send(dateStart.toString())
-                    }
-                    send(dateStop.toString())
-                    runBlocking {
-                        job.join()
-                    }
-                    Toast.makeText(this, "Podlewanie zostało zapisane", Toast.LENGTH_SHORT).show()
+                    val date = data!!.getStringExtra(PlannedActivity.plannedDate)
+                    send(date.toString())
+                    Toast.makeText(this, "Ustawiono planowane podlewanie", Toast.LENGTH_SHORT).show()
                 }
             }
         } else if (requestCode == 2) {
@@ -139,11 +132,17 @@ class ControlActivity : AppCompatActivity() {
                 val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
                 val sensorsAmount = sharedPreferences.getString("sensorsAmount", "1")!!.toInt()
-                val automaticIrrigation = if (sharedPreferences.getBoolean("automaticIrrigationSwitch", true)) 1 else 0
+                val mode = sharedPreferences.getString("modeIrrigation", "1")!!.toInt()
 
-                Log.i("PREF", "Czujniki ${sensorsAmount} auto: ${automaticIrrigation}")
+                Log.i("PREF", "Czujniki ${sensorsAmount} auto: ${mode}")
                 Toast.makeText(this, "Ustawienia zostały zapisane", Toast.LENGTH_SHORT).show()
-                send("SET,${sensorsAmount},${automaticIrrigation}")
+                send("SET,${sensorsAmount},${mode}")
+            }
+        } else if (requestCode == 3) {
+            if (mIsConnected && mBluetoothSocket!!.isConnected) {
+                val date = data!!.getStringExtra(CyclicActivity.cyclicData)
+                send(date.toString())
+                Toast.makeText(this, "Ustawiono cykliczne podlewanie", Toast.LENGTH_SHORT).show()
             }
         }
 

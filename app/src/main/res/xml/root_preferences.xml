@@ -9,12 +9,14 @@
             app:entryValues="@array/sensors_amount_values"
             app:key="sensorsAmount"
             app:title="@string/sensors_amount_title"
-            app:useSimpleSummaryProvider="true" /> 
-        <SwitchPreferenceCompat
-            android:id="@+id/automaticIrrigationSwitch"
-            app:key="automaticIrrigationSwitch"
-            app:summary="Podlewa uwzgledniając uśrednione pomiary z czujników"
-            app:title="Automatyczne podlewanie" />
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            android:id="@+id/modeIrrigation"
+            android:entries="@array/settings"
+            android:entryValues="@array/settings_values"
+            android:key="modeIrrigation"
+            android:summary="@string/modeSummary"
+            android:title="Tryb" />
 
     </PreferenceCategory>
 

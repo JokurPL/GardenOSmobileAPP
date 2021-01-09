@@ -3,13 +3,19 @@ package com.example.gardenos
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.Toast
+import android.widget.*
+import kotlinx.android.synthetic.main.cyclic_activity.*
 import kotlinx.android.synthetic.main.planned_activity.*
+import kotlinx.android.synthetic.main.planned_activity.setIrrigationDateButton
+import kotlinx.android.synthetic.main.planned_activity.startIrrigationPicker
+import kotlinx.android.synthetic.main.planned_activity.stopIrrigationPicker
 
-class CyclicActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+class CyclicActivity : AppCompatActivity() {
+
+    companion object  {
+        val cyclicData = "cyclic_data"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.cyclic_activity)
@@ -17,103 +23,38 @@ class CyclicActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         supportActionBar!!.subtitle = "Cykliczne podlewanie"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        startIrrigationPicker.setIs24HourView(true);
-        stopIrrigationPicker.setIs24HourView(true);
+        startCyclicIrrigationPicker.setIs24HourView(true);
+        stopCyclicIrrigationPicker.setIs24HourView(true);
 
-        val dayAmountSpinner: Spinner = findViewById(R.id.dayAmountCyclicIrrigation)
-        val adapter = ArrayAdapter.createFromResource(
-            this,
-            R.array.day_amount_cyclic_irrigation,
-            android.R.layout.simple_spinner_dropdown_item
-        )
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        dayAmountSpinner.adapter = adapter
-        dayAmountSpinner.onItemSelectedListener = this
+        setIrrigationDateButton.setOnClickListener {
+            val monday: CheckBox = findViewById(R.id.mondayCyclic)
+            val tuesdey: CheckBox = findViewById(R.id.tuesdeyCyclic)
+            val wednesdey: CheckBox = findViewById(R.id.wednesdeyCyclic)
+            val thursday: CheckBox = findViewById(R.id.thursdayCyclic)
+            val friday: CheckBox = findViewById(R.id.fridayCyclic)
+            val saturday: CheckBox = findViewById(R.id.saturdayCyclic)
+            val sunday: CheckBox = findViewById(R.id.sundayCyclic)
 
-    }
+            val isMonday = if (monday.isChecked) 1 else 0
+            val isTuesdey = if (tuesdey.isChecked) 1 else 0
+            val isWednesdey = if (wednesdey.isChecked) 1 else 0
+            val isThursday = if (thursday.isChecked) 1 else 0
+            val isFriday = if (friday.isChecked) 1 else 0
+            val isSaturday = if (saturday.isChecked) 1 else 0
+            val isSunday = if (sunday.isChecked) 1 else 0
 
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            val startMinutes = startCyclicIrrigationPicker.minute.toString()
+            val startHour = startCyclicIrrigationPicker.hour.toString()
 
-        val dayOfWeekSpinner1: Spinner = findViewById(R.id.dayOfWeekCyclicIrrigation1)
-        val dayOfWeekSpinner2: Spinner = findViewById(R.id.dayOfWeekCyclicIrrigation2)
-        val dayOfWeekSpinner3: Spinner = findViewById(R.id.dayOfWeekCyclicIrrigation3)
-        val dayOfWeekSpinner4: Spinner = findViewById(R.id.dayOfWeekCyclicIrrigation4)
-        val dayOfWeekSpinner5: Spinner = findViewById(R.id.dayOfWeekCyclicIrrigation5)
-        val dayOfWeekSpinner6: Spinner = findViewById(R.id.dayOfWeekCyclicIrrigation6)
-        val dayOfWeekSpinner7: Spinner = findViewById(R.id.dayOfWeekCyclicIrrigation7)
+            val stopMinutes = stopCyclicIrrigationPicker.minute.toString()
+            val stopHour = stopCyclicIrrigationPicker.hour.toString()
 
-        Toast.makeText(this, "Wybrałeś: ${parent?.getItemAtPosition(position)}", Toast.LENGTH_SHORT).show()
+            val summary = "SCI,${isMonday},${isTuesdey},${isWednesdey},${isThursday},${isFriday},${isSaturday},${isSunday},${startHour},${startMinutes},${stopHour},${stopMinutes}"
+            intent.putExtra(cyclicData, summary)
 
-        when (parent?.getItemAtPosition(position)) {
-            "1" -> {
-                dayOfWeekSpinner1.visibility = View.VISIBLE
-                dayOfWeekSpinner2.visibility = View.GONE
-                dayOfWeekSpinner3.visibility = View.GONE
-                dayOfWeekSpinner4.visibility = View.GONE
-                dayOfWeekSpinner5.visibility = View.GONE
-                dayOfWeekSpinner6.visibility = View.GONE
-                dayOfWeekSpinner7.visibility = View.GONE
-            }
-            "2" -> {
-                dayOfWeekSpinner1.visibility = View.VISIBLE
-                dayOfWeekSpinner2.visibility = View.VISIBLE
-                dayOfWeekSpinner3.visibility = View.GONE
-                dayOfWeekSpinner4.visibility = View.GONE
-                dayOfWeekSpinner5.visibility = View.GONE
-                dayOfWeekSpinner6.visibility = View.GONE
-                dayOfWeekSpinner7.visibility = View.GONE
-            }
-            "3" -> {
-                dayOfWeekSpinner1.visibility = View.VISIBLE
-                dayOfWeekSpinner2.visibility = View.VISIBLE
-                dayOfWeekSpinner3.visibility = View.VISIBLE
-                dayOfWeekSpinner4.visibility = View.GONE
-                dayOfWeekSpinner5.visibility = View.GONE
-                dayOfWeekSpinner6.visibility = View.GONE
-                dayOfWeekSpinner7.visibility = View.GONE
-            }
-            "4" -> {
-                dayOfWeekSpinner1.visibility = View.VISIBLE
-                dayOfWeekSpinner2.visibility = View.VISIBLE
-                dayOfWeekSpinner3.visibility = View.VISIBLE
-                dayOfWeekSpinner4.visibility = View.VISIBLE
-                dayOfWeekSpinner5.visibility = View.GONE
-                dayOfWeekSpinner6.visibility = View.GONE
-                dayOfWeekSpinner7.visibility = View.GONE
-            }
-            "5" -> {
-                dayOfWeekSpinner1.visibility = View.VISIBLE
-                dayOfWeekSpinner2.visibility = View.VISIBLE
-                dayOfWeekSpinner3.visibility = View.VISIBLE
-                dayOfWeekSpinner4.visibility = View.VISIBLE
-                dayOfWeekSpinner5.visibility = View.VISIBLE
-                dayOfWeekSpinner6.visibility = View.GONE
-                dayOfWeekSpinner7.visibility = View.GONE
-
-            }
-            "6" -> {
-                dayOfWeekSpinner1.visibility = View.VISIBLE
-                dayOfWeekSpinner2.visibility = View.VISIBLE
-                dayOfWeekSpinner3.visibility = View.VISIBLE
-                dayOfWeekSpinner4.visibility = View.VISIBLE
-                dayOfWeekSpinner5.visibility = View.VISIBLE
-                dayOfWeekSpinner6.visibility = View.VISIBLE
-                dayOfWeekSpinner7.visibility = View.GONE
-            }
-            "7" -> {
-                dayOfWeekSpinner1.visibility = View.VISIBLE
-                dayOfWeekSpinner2.visibility = View.VISIBLE
-                dayOfWeekSpinner3.visibility = View.VISIBLE
-                dayOfWeekSpinner4.visibility = View.VISIBLE
-                dayOfWeekSpinner5.visibility = View.VISIBLE
-                dayOfWeekSpinner6.visibility = View.VISIBLE
-                dayOfWeekSpinner7.visibility = View.GONE
-            }
+            setResult(RESULT_OK, intent)
+            finish()
         }
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        // TO DO
     }
 
     override fun onSupportNavigateUp(): Boolean {

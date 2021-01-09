@@ -8,8 +8,7 @@ import kotlinx.android.synthetic.main.planned_activity.*
 class PlannedActivity : AppCompatActivity() {
 
     companion object {
-        val dateStart: String = "date_start_irrigation"
-        val dateStop: String = "date_stop_irrigation"
+        val plannedDate: String = "date_planned_irrigation"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,8 +40,7 @@ class PlannedActivity : AppCompatActivity() {
             val startDayStop = stopIrrigationDatePicker.dayOfMonth.toString()
             val startYearStop = stopIrrigationDatePicker.year.toString()
 
-            intent.putExtra(dateStart, "ATS,${seconds},${startMinutesStart},${startHourStart},0,${startDayStart},${startMonthStart},${startYearStart[2]}${startYearStart[3]}")
-            intent.putExtra(dateStop, "ATF,${seconds},${startMinutesStop},${startHourStop},0,${startDayStop},${startMonthStop},${startYearStop[2]}${startYearStop[3]}")
+            intent.putExtra(plannedDate, "ATS,${seconds},${startMinutesStart},${startHourStart},0,${startDayStart},${startMonthStart},${startYearStart[2]}${startYearStart[3]},${seconds},${startMinutesStop},${startHourStop},0,${startDayStop},${startMonthStop},${startYearStop[2]}${startYearStop[3]}")
 
             setResult(RESULT_OK, intent)
             finish()
