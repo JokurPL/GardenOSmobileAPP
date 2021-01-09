@@ -18,8 +18,10 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import java.io.*
+import java.lang.NumberFormatException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.concurrent.schedule
 
 
 class ControlActivity : AppCompatActivity() {
@@ -118,11 +120,9 @@ class ControlActivity : AppCompatActivity() {
 
         manualIrrigationToggle.setOnClickListener {
             if (manualIrrigationToggle.isChecked) {
-                Log.i("TO", "podlewam")
                 send("MAN,1")
             }
             else {
-                Log.i("TO", "nie podlewam")
                 send("MAN,0")
             }
         }
@@ -188,6 +188,7 @@ class ControlActivity : AppCompatActivity() {
                     try {
                         numBytes = mmInStream.read(mmBuffer)
                         var receivedData: String = mmBuffer.decodeToString(endIndex = numBytes)
+                        Log.i("SERIAL", receivedData.toString())
                         if (receivedData[0].toString() == "A") {
 
                             val sensorID = receivedData.slice(0..2)
@@ -212,10 +213,22 @@ class ControlActivity : AppCompatActivity() {
 
                             })
                         }
-                        else if (receivedData[0].toString() == "T"){
+                        else if (receivedData[0].toString() == "T") {
                             runOnUiThread(java.lang.Runnable {
                                 dateText.text = receivedData.slice(1 until receivedData.length)
                             })
+                            send("GET")
+                        }
+                        else if (receivedData[0].toString() == "S") {
+                            try {
+                                val isManualIrrigation = receivedData.slice(1 until receivedData.length).toInt()
+                                Log.i("LO", receivedData.toString())
+                                runOnUiThread(java.lang.Runnable {
+                                    manualIrrigationToggle.isChecked = isManualIrrigation == 1
+                                })
+                            } catch (e: NumberFormatException) {
+                            }
+
                         }
                     } catch (e: IOException) {
                         Log.e("IOE", e.toString())
@@ -277,12 +290,13 @@ class ControlActivity : AppCompatActivity() {
                 val formatter = SimpleDateFormat("s,m,H,u,d,M,YY")
                 val answer: String = formatter.format(date)
                 val toSend = "RTC,${answer}"
-                Log.i("DATE", toSend)
                 send(toSend)
 
                 connectProgressBar.visibility = View.INVISIBLE
                 btConnected.visibility = View.VISIBLE
                 btNotConnected.visibility = View.INVISIBLE
+
+
                 Toast.makeText(applicationContext, "Połączono z urządzeniem", Toast.LENGTH_SHORT).show()
 
                 CoroutineScope(IO).launch {
@@ -292,7 +306,6 @@ class ControlActivity : AppCompatActivity() {
                 CoroutineScope(Default).launch {
                     checkConnection()
                 }
-
             })
         }
         else {
