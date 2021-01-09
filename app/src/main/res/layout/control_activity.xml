@@ -64,7 +64,22 @@
         android:textSize="12sp"
         android:text="@string/testString"
         app:layout_constraintStart_toEndOf="@+id/dscButton"
-        app:layout_constraintTop_toBottomOf="@+id/deviceAddressView" />
+        app:layout_constraintTop_toBottomOf="@+id/deviceAddressView"
+        android:visibility="gone"
+        />
+
+    <ToggleButton
+        android:id="@+id/manualIrrigationToggle"
+        android:layout_width="115dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="ToggleButton"
+        android:textOff="PODLEWAJ"
+        android:textOn="ZAKOŃCZ"
+        app:layout_constraintStart_toEndOf="@id/dscButton"
+        app:layout_constraintTop_toBottomOf="@+id/deviceAddressView"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/btConnected"

@@ -96,6 +96,7 @@ class ControlActivity : AppCompatActivity() {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         mBluetoothDevice = mBluetoothAdapter.getRemoteDevice(mAddress)
 
+        manualIrrigation()
 
         connectButton.setOnClickListener {
             if (!mIsConnected) {
@@ -114,6 +115,23 @@ class ControlActivity : AppCompatActivity() {
                 disconnect()
             }
         }
+
+        manualIrrigationToggle.setOnClickListener {
+            if (manualIrrigationToggle.isChecked) {
+                Log.i("TO", "podlewam")
+                send("MAN,1")
+            }
+            else {
+                Log.i("TO", "nie podlewam")
+                send("MAN,0")
+            }
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        manualIrrigation()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -219,6 +237,13 @@ class ControlActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun manualIrrigation() {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val mode = sharedPreferences.getString("modeIrrigation", "1")!!.toInt()
+
+        manualIrrigationToggle.isEnabled = mode == 4
     }
 
     private suspend fun connect() {

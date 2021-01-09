@@ -50,12 +50,14 @@
         <item>Automatyczne podlewanie</item>
         <item>Planowane podlewanie</item>
         <item>Cykliczne podlewanie</item>
+        <item>Ręczne podlewanie</item>
     </string-array>
 
     <string-array name="settings_values">
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
     </string-array>
 
 </resources>
