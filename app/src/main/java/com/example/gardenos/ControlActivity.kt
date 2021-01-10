@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import java.io.*
 import java.lang.NumberFormatException
+import java.sql.Time
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.schedule
@@ -28,8 +29,6 @@ class ControlActivity : AppCompatActivity() {
 
     companion object {
         var mMyUUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-
-        //var mMyUUID: UUID = UUID.randomUUID()
         var mIsConnected: Boolean = false
         var mBluetoothSocket: BluetoothSocket? = null
 
@@ -143,25 +142,49 @@ class ControlActivity : AppCompatActivity() {
                     val date = data!!.getStringExtra(PlannedActivity.plannedDate)
                     send(date.toString())
                     Toast.makeText(this, "Ustawiono planowane podlewanie", Toast.LENGTH_SHORT).show()
+                    GlobalScope.launch {
+                        delay(2000)
+                        send("GET")
+                    }
+
+                    plannedStartIrrigationTextInput.visibility = View.INVISIBLE
+                    plannedStopIrrigationTextInput.visibility = View.INVISIBLE
+
+                    plannedProgress.visibility = View.VISIBLE
                 }
             }
         } else if (requestCode == 2) {
-            if (mIsConnected && mBluetoothSocket!!.isConnected) {
-                val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+            if (resultCode == RESULT_OK) {
+                if (mIsConnected && mBluetoothSocket!!.isConnected) {
+                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
-                val sensorsAmount = sharedPreferences.getString("sensorsAmount", "1")!!.toInt()
-                val mode = sharedPreferences.getString("modeIrrigation", "1")!!.toInt()
+                    val sensorsAmount = sharedPreferences.getString("sensorsAmount", "1")!!.toInt()
+                    val mode = sharedPreferences.getString("modeIrrigation", "1")!!.toInt()
 
-                Log.i("PREF", "Czujniki ${sensorsAmount} auto: ${mode}")
-                Toast.makeText(this, "Ustawienia zostały zapisane", Toast.LENGTH_SHORT).show()
-                send("SET,${sensorsAmount},${mode}")
+                    Log.i("PREF", "Czujniki ${sensorsAmount} auto: ${mode}")
+                    Toast.makeText(this, "Ustawienia zostały zapisane", Toast.LENGTH_SHORT).show()
+                    send("SET,${sensorsAmount},${mode}")
+                }
             }
+
         } else if (requestCode == 3) {
-            if (mIsConnected && mBluetoothSocket!!.isConnected) {
-                val date = data!!.getStringExtra(CyclicActivity.cyclicData)
-                send(date.toString())
-                Toast.makeText(this, "Ustawiono cykliczne podlewanie", Toast.LENGTH_SHORT).show()
+            if (resultCode == RESULT_OK) {
+                if (mIsConnected && mBluetoothSocket!!.isConnected) {
+                    val date = data!!.getStringExtra(CyclicActivity.cyclicData)
+                    send(date.toString())
+                    Toast.makeText(this, "Ustawiono cykliczne podlewanie", Toast.LENGTH_SHORT).show()
+                    GlobalScope.launch {
+                        delay(2000)
+                        send("GET")
+                    }
+
+                    cyclicIrrigationTextInputTime.visibility = View.INVISIBLE
+                    cyclicIrrigationTextInput.visibility = View.INVISIBLE
+
+                    cyclicProgress.visibility = View.VISIBLE
+                }
             }
+
         }
 
     }
@@ -227,8 +250,33 @@ class ControlActivity : AppCompatActivity() {
                                     manualIrrigationToggle.isChecked = isManualIrrigation == 1
                                 })
                             } catch (e: NumberFormatException) {
+                                e.printStackTrace()
                             }
 
+                        }
+                        else if (receivedData[0].toString() == "I") {
+                            runOnUiThread(java.lang.Runnable {
+                                plannedStartIrrigationTextInput.text = "Od: " + receivedData.slice(1 until receivedData.length)
+                            })
+                        }
+                        else if (receivedData[0].toString() == "J") {
+                            runOnUiThread(java.lang.Runnable {
+                                plannedStopIrrigationTextInput.text = "Do: " + receivedData.slice(1 until receivedData.length)
+                            })
+                        }
+                        else if (receivedData[0].toString() == "K") {
+                            runOnUiThread(java.lang.Runnable {
+
+                                cyclicIrrigationTextInput.text = receivedData.slice(1 until receivedData.length)
+
+                                cyclicIrrigationTextInputTime.visibility = View.VISIBLE
+                                cyclicIrrigationTextInput.visibility = View.VISIBLE
+                                plannedStartIrrigationTextInput.visibility = View.VISIBLE
+                                plannedStopIrrigationTextInput.visibility = View.VISIBLE
+
+                                plannedProgress.visibility = View.INVISIBLE
+                                cyclicProgress.visibility = View.INVISIBLE
+                            })
                         }
                     } catch (e: IOException) {
                         Log.e("IOE", e.toString())
@@ -245,7 +293,7 @@ class ControlActivity : AppCompatActivity() {
                 try {
                     mBluetoothSocket!!.outputStream.write(input.toByteArray())
                 } catch (e: IOError) {
-                    Toast.makeText(this, "Test nie powiódł się", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Wysyłanie danych nie powiodło się", Toast.LENGTH_SHORT).show()
                     e.printStackTrace()
                 }
             }
@@ -278,6 +326,14 @@ class ControlActivity : AppCompatActivity() {
                 btConnected.visibility = View.INVISIBLE
                 btNotConnected.visibility = View.INVISIBLE
                 connectProgressBar.visibility = View.VISIBLE
+
+                cyclicIrrigationTextInputTime.visibility = View.INVISIBLE
+                cyclicIrrigationTextInput.visibility = View.INVISIBLE
+                plannedStartIrrigationTextInput.visibility = View.INVISIBLE
+                plannedStopIrrigationTextInput.visibility = View.INVISIBLE
+
+                plannedProgress.visibility = View.VISIBLE
+                cyclicProgress.visibility = View.VISIBLE
             })
         }
         if (con.await()) {
