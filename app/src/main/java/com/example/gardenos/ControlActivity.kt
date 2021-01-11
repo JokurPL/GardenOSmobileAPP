@@ -1,4 +1,4 @@
-package com.example.gardenos
+  package com.example.gardenos
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -154,17 +154,16 @@ class ControlActivity : AppCompatActivity() {
                 }
             }
         } else if (requestCode == 2) {
-            if (resultCode == RESULT_OK) {
                 if (mIsConnected && mBluetoothSocket!!.isConnected) {
                     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
                     val sensorsAmount = sharedPreferences.getString("sensorsAmount", "1")!!.toInt()
                     val mode = sharedPreferences.getString("modeIrrigation", "1")!!.toInt()
+                    val minMoisture = sharedPreferences.getString("minMoisture", "50")!!.toInt()
 
-                    Log.i("PREF", "Czujniki ${sensorsAmount} auto: ${mode}")
+                    Log.i("PREF", "Czujniki ${sensorsAmount} auto: ${mode}, min: ${minMoisture}")
                     Toast.makeText(this, "Ustawienia zostały zapisane", Toast.LENGTH_SHORT).show()
-                    send("SET,${sensorsAmount},${mode}")
-                }
+                    send("SET,${sensorsAmount},${mode},${minMoisture}")
             }
 
         } else if (requestCode == 3) {
@@ -193,7 +192,7 @@ class ControlActivity : AppCompatActivity() {
         if (mIsConnected) {
             coroutineScope {
                 while (mIsConnected) run {
-                    if (!mBluetoothAdapter.isEnabled && !mBluetoothSocket!!.isConnected) {
+                    if (!mBluetoothAdapter!!.isEnabled) {
                         connect()
                     }
                 }
@@ -316,7 +315,6 @@ class ControlActivity : AppCompatActivity() {
                 return@async true
             } catch (e: IOException) {
                 Log.e("IOE", e.toString())
-                //this.cancel()
                 mIsConnected = false
                 return@async false
             }
@@ -365,12 +363,18 @@ class ControlActivity : AppCompatActivity() {
             })
         }
         else {
+            mIsConnected = false
             runOnUiThread(java.lang.Runnable {
-                mIsConnected = false
                 btConnected.visibility = View.INVISIBLE
                 btNotConnected.visibility = View.VISIBLE
                 connectProgressBar.visibility = View.INVISIBLE
                 Toast.makeText(applicationContext, "Niepołączono z urządzeniem", Toast.LENGTH_SHORT).show()
+                plannedProgress.visibility = View.INVISIBLE
+                cyclicProgress.visibility = View.INVISIBLE
+                cyclicIrrigationTextInputTime.visibility = View.VISIBLE
+                cyclicIrrigationTextInput.visibility = View.VISIBLE
+                plannedStartIrrigationTextInput.visibility = View.VISIBLE
+                plannedStopIrrigationTextInput.visibility = View.VISIBLE
             })
         }
     }

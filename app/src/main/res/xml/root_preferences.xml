@@ -3,6 +3,13 @@
 
     <PreferenceCategory app:title="Ogólne">
 
+        <EditTextPreference
+            android:id="@+id/minMoistureText"
+            android:inputType="number"
+            android:title="Minimalna wilgotność"
+            android:summary="Uwzględniana jest tylko w trybie automatycznym"
+            android:key="minMoisture"
+            />
         <ListPreference
             android:id="@+id/moistureSensorsAmount"
             app:entries="@array/sensors_amount_entries"

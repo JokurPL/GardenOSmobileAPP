@@ -17,5 +17,5 @@
     <string name="sensors_amount_title">Liczba czujników</string>
     <string name="cyclicTextMenu">Cykliczne podlewanie</string>
     <string name="cyclicDayHeaderText">Wybierz dni cyklicznej irrygacji</string>
-    <string name="modeSummary"><b>Automatyczne podlewanie</b> - podlewa uwzgledniając uśrednione pomiary z czujników \n<b>Planowane podlewanie</b> - podlewa uwzgledniając ustawione planowane podlewanie \n<b>Cykliczne podlewanie</b> - podlewa uwzgledniając ustawione cykliczne podlewanie</string>
+    <string name="modeSummary"><b>Automatyczne podlewanie</b> - podlewa uwzgledniając uśrednione pomiary z czujników \n<b>Planowane podlewanie</b> - podlewa uwzgledniając ustawione planowane podlewanie \n<b>Cykliczne podlewanie</b> - podlewa uwzgledniając ustawione cykliczne podlewanie\n<b>Ręczne podlewanie</b> - podlewa kiedy użytkownik kliknie przycisk</string>
 </resources>
