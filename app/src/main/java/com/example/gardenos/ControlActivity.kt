@@ -277,6 +277,19 @@ class ControlActivity : AppCompatActivity() {
                                 cyclicProgress.visibility = View.INVISIBLE
                             })
                         }
+                        else if (receivedData[0].toString() == "R") {
+                            runOnUiThread ( java.lang.Runnable {
+                                if (receivedData[1] == '1') {
+                                    irrigationStatusTextInput.text = "W trakcie podlewania"
+                                }
+                                else {
+                                    irrigationStatusTextInput.text = "W stanie spoczynku"
+                                }
+
+                                irrigationStatusTextInput.visibility = View.VISIBLE
+                                statusProgress.visibility = View.INVISIBLE
+                            })
+                        }
                     } catch (e: IOException) {
                         Log.e("IOE", e.toString())
                         this.cancel()
@@ -329,7 +342,9 @@ class ControlActivity : AppCompatActivity() {
                 cyclicIrrigationTextInput.visibility = View.INVISIBLE
                 plannedStartIrrigationTextInput.visibility = View.INVISIBLE
                 plannedStopIrrigationTextInput.visibility = View.INVISIBLE
+                irrigationStatusTextInput.visibility = View.INVISIBLE
 
+                statusProgress.visibility = View.VISIBLE
                 plannedProgress.visibility = View.VISIBLE
                 cyclicProgress.visibility = View.VISIBLE
             })
