@@ -276,8 +276,7 @@ class ControlActivity : AppCompatActivity() {
                                 plannedProgress.visibility = View.INVISIBLE
                                 cyclicProgress.visibility = View.INVISIBLE
                             })
-                        }
-                        else if (receivedData[0].toString() == "R") {
+                        } else if (receivedData[0].toString() == "R") {
                             runOnUiThread ( java.lang.Runnable {
                                 if (receivedData[1] == '1') {
                                     irrigationStatusTextInput.text = "W trakcie podlewania"
@@ -288,6 +287,14 @@ class ControlActivity : AppCompatActivity() {
 
                                 irrigationStatusTextInput.visibility = View.VISIBLE
                                 statusProgress.visibility = View.INVISIBLE
+                            })
+                        } else if (receivedData[0].toString() == "M") {
+                            runOnUiThread (java.lang.Runnable {
+                                avgMoistureInput.text = receivedData.slice(1 until receivedData.length) + "%"
+
+                                avgMoistureInput.visibility = View.VISIBLE
+                                avgMoistureProgress.visibility = View.INVISIBLE
+
                             })
                         }
                     } catch (e: IOException) {
@@ -343,7 +350,9 @@ class ControlActivity : AppCompatActivity() {
                 plannedStartIrrigationTextInput.visibility = View.INVISIBLE
                 plannedStopIrrigationTextInput.visibility = View.INVISIBLE
                 irrigationStatusTextInput.visibility = View.INVISIBLE
+                avgMoistureInput.visibility = View.INVISIBLE
 
+                avgMoistureProgress.visibility = View.VISIBLE
                 statusProgress.visibility = View.VISIBLE
                 plannedProgress.visibility = View.VISIBLE
                 cyclicProgress.visibility = View.VISIBLE
@@ -383,13 +392,20 @@ class ControlActivity : AppCompatActivity() {
                 btConnected.visibility = View.INVISIBLE
                 btNotConnected.visibility = View.VISIBLE
                 connectProgressBar.visibility = View.INVISIBLE
+
                 Toast.makeText(applicationContext, "Niepołączono z urządzeniem", Toast.LENGTH_SHORT).show()
+
+                statusProgress.visibility = View.INVISIBLE
                 plannedProgress.visibility = View.INVISIBLE
                 cyclicProgress.visibility = View.INVISIBLE
+                avgMoistureProgress.visibility = View.INVISIBLE
+
                 cyclicIrrigationTextInputTime.visibility = View.VISIBLE
                 cyclicIrrigationTextInput.visibility = View.VISIBLE
                 plannedStartIrrigationTextInput.visibility = View.VISIBLE
                 plannedStopIrrigationTextInput.visibility = View.VISIBLE
+                irrigationStatusTextInput.visibility = View.VISIBLE
+                avgMoistureInput.visibility = View.VISIBLE
             })
         }
     }
